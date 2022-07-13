@@ -5,12 +5,6 @@ import FeedbackOptions from './FeedbackOptions';
 import Section from './Section';
 
 class App extends React.Component {
-  static defaultProps = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-    positivePercentage: 0,
-  };
   state = {
     good: 0,
     neutral: 0,
@@ -23,7 +17,6 @@ class App extends React.Component {
     }
     const name = event.target.name;
     this.setState(prevState => ({ [name]: prevState[name] + 1 }));
-    console.log(this.state.value);
   };
 
   countTotalFeedback = () => {
