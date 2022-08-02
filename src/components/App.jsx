@@ -1,53 +1,57 @@
-import React from 'react';
+import { useState } from 'react';
 import Notification from './Notification';
 import Statistics from './Statistics';
 import FeedbackOptions from './FeedbackOptions';
 import Section from './Section';
 
-class App extends React.Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export default function App() {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  hendleIncrement = event => {
-    if (event.target.nodeName !== 'BUTTON') {
-      return;
-    }
+  const hendleIncrement = event => {
     const name = event.target.name;
-    this.setState(prevState => ({ [name]: prevState[name] + 1 }));
+
+    switch (name) {
+      case 'good':
+        setGood(prevState => prevState + 1);
+        break;
+      case 'neutral':
+        setNeutral(prevState => prevState + 1);
+        break;
+      case 'bad':
+        setBad(prevState => prevState + 1);
+        break;
+      default:
+        return;
+    }
   };
 
-  countTotalFeedback = () => {
-    return Object.values(this.state).reduce((acc, num) => acc + num, 0);
+  const countTotalFeedback = () => {
+    return [good, neutral, bad].reduce((acc, num) => acc + num, 0);
   };
 
-  countPositiveFeedbackPercentage = () => {
-    return Math.round((this.state.good / this.countTotalFeedback()) * 100);
+  const countPositiveFeedbackPercentage = () => {
+    return Math.round((good / countTotalFeedback()) * 100);
   };
-
-  render() {
-    return (
-      <div>
-        <Section title="Please leave feedback">
-          <FeedbackOptions onLeaveFeedback={this.hendleIncrement} />
-        </Section>
-        <Section title="statistics">
-          {this.countTotalFeedback() ? (
-            <Statistics
-              good={this.state.good}
-              neutral={this.state.neutral}
-              bad={this.state.bad}
-              total={this.countTotalFeedback()}
-              positivePercentage={this.countPositiveFeedbackPercentage()}
-            />
-          ) : (
-            <Notification message="No feedback given" />
-          )}
-        </Section>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Section title="Please leave feedback">
+        <FeedbackOptions onLeaveFeedback={hendleIncrement} />
+      </Section>
+      <Section title="statistics">
+        {countTotalFeedback() ? (
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={countTotalFeedback()}
+            positivePercentage={countPositiveFeedbackPercentage()}
+          />
+        ) : (
+          <Notification message="No feedback given" />
+        )}
+      </Section>
+    </div>
+  );
 }
-export default App;
